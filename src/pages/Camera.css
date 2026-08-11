@@ -1,0 +1,271 @@
+.camera-page {
+  max-width: 1080px;
+  margin: 0 auto;
+  padding-inline: var(--space-md);
+}
+
+.camera-page__grid {
+  display: grid;
+  grid-template-columns: 1.1fr 1fr;
+  gap: var(--space-lg);
+  align-items: start;
+}
+
+.camera-page__panel {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: 20px;
+  padding: var(--space-lg);
+  box-shadow: 0 1px 3px rgba(17, 48, 55, 0.06), 0 1px 2px rgba(17, 48, 55, 0.04);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+  min-width: 0; /* prevents grid children (video, previews) from overflowing */
+}
+
+.camera-page__panel-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #1d505e;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.camera-page__panel-footer {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-md);
+}
+
+.camera-page__panel-footer--top {
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  margin-bottom: var(--space-md);
+}
+
+.camera-page__error {
+  background-color: var(--color-danger-light);
+  color: var(--color-danger);
+  border-radius: 12px;
+  padding: var(--space-sm) var(--space-md);
+  font-size: 13px;
+  word-break: break-word;
+}
+
+.camera-page__mode-toggle {
+  display: flex;
+  gap: 4px;
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  padding: 4px;
+  flex-wrap: wrap;
+}
+
+.camera-page__mode-btn {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 18px;
+  border-radius: 999px;
+  border: 1px solid transparent;
+  background-color: transparent;
+  color: var(--color-text-secondary);
+  cursor: pointer;
+  flex: 1 1 auto;
+  min-width: 96px;
+  transition: background-color 150ms ease, color 150ms ease;
+}
+
+.camera-page__mode-btn:hover {
+  color: #1d505e;
+}
+
+.camera-page__mode-btn.is-active {
+  background-color: #1d505e;
+  border-color: #1d505e;
+  color: #fff;
+}
+
+.camera-page__upload {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-sm);
+  min-width: 0;
+}
+
+.camera-page__upload-label {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+}
+
+.camera-page__upload-row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  flex-wrap: wrap;
+}
+
+.camera-page__upload-row input[type='file'] {
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  max-width: 100%;
+}
+
+.camera-page__upload-row button {
+  font-size: 13px;
+  font-weight: 600;
+  padding: 10px 20px;
+  border-radius: 999px;
+  border: 1.5px solid #1d505e;
+  background-color: transparent;
+  color: #1d505e;
+  cursor: pointer;
+  flex: 1 1 auto;
+  min-width: 96px;
+  transition: background-color 150ms ease;
+}
+
+.camera-page__upload-row button:first-of-type {
+  background-color: #1d505e;
+  color: #fff;
+}
+
+.camera-page__upload-row button:first-of-type:hover:not(:disabled) {
+  background-color: #113037;
+}
+
+.camera-page__upload-row button:hover:not(:disabled) {
+  background-color: rgba(29, 80, 94, 0.08);
+}
+
+.camera-page__upload-row button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.camera-page__upload-preview {
+  width: 96px;
+  height: 96px;
+  object-fit: cover;
+  border-radius: 16px;
+  border: 1px solid var(--color-border);
+}
+
+/* Tablet and below: stack the two panels, camera above result */
+@media (max-width: 860px) {
+  .camera-page__grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Small tablet / large phone: tighten spacing, smaller headings */
+@media (max-width: 640px) {
+  .camera-page {
+    padding-inline: var(--space-sm);
+  }
+
+  .camera-page__panel {
+    padding: var(--space-md);
+    border-radius: 16px;
+  }
+
+  .camera-page__mode-btn {
+    font-size: 12px;
+    padding: 8px var(--space-sm);
+  }
+}
+
+/* Phones: full-width action buttons, smaller preview thumbnail */
+@media (max-width: 420px) {
+  .camera-page__upload-row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .camera-page__upload-row input[type='file'] {
+    width: 100%;
+  }
+
+  .camera-page__upload-row button {
+    width: 100%;
+  }
+
+  .camera-page__upload-preview {
+    width: 100%;
+    height: auto;
+    max-height: 220px;
+  }
+
+  .camera-page__mode-toggle {
+    flex-direction: column;
+  }
+
+  .camera-page__mode-btn {
+    width: 100%;
+  }
+
+  .camera-page__panel-footer--top {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+/* Desktop/tablet default: both panels visible side by side, activePanel
+   has no visual effect. Below the breakpoint, only the active panel is
+   shown, full-screen, positioned below the sticky navbar. */
+@media (max-width: 768px) {
+  .camera-page__grid {
+    display: block;
+  }
+
+  .camera-page__panel {
+    display: none;
+  }
+
+  .camera-page__panel.is-active {
+    display: flex;
+    flex-direction: column;
+    position: fixed;
+    top: var(--topbar-height, 64px);
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 20;
+    background: #0f172a;
+    padding: var(--space-sm);
+    padding-bottom: calc(var(--space-lg) + env(safe-area-inset-bottom, 0px));
+    overflow-y: auto;
+  }
+
+  /* Let the video fill the screen instead of staying locked to a 4:3 box
+     inside a padded card. */
+  .camera-page__panel.is-active .camera-view {
+    aspect-ratio: auto;
+    flex: 1;
+    min-height: 0;
+    border-radius: 0;
+  }
+
+  .camera-page__back-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    align-self: flex-start;
+    margin-bottom: var(--space-sm);
+    padding: 8px 16px;
+    border-radius: 999px;
+    border: 1px solid rgba(148, 163, 184, 0.3);
+    background: rgba(29, 80, 94, 0.6);
+    color: #e2e8f0;
+    font-size: 14px;
+    font-weight: 600;
+    flex-shrink: 0;
+  }
+}
+
+/* Hidden by default — only shown inside the mobile breakpoint above. */
+.camera-page__back-btn {
+  display: none;
+}

@@ -1,0 +1,181 @@
+.face-result {
+  border-radius: var(--radius-lg);
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-border);
+  padding: var(--space-lg);
+  min-height: 220px;
+  display: flex;
+}
+
+/* --- Empty / loading / error states share a centered layout --- */
+.face-result--empty,
+.face-result--loading,
+.face-result--error {
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: var(--space-xs);
+  width: 100%;
+}
+
+.face-result__title {
+  font-weight: 700;
+  font-size: 15px;
+  color: var(--color-text-primary);
+}
+
+.face-result__subtitle {
+  font-size: 13px;
+  color: var(--color-text-muted);
+  max-width: 32ch;
+}
+
+.face-result--error .face-result__title {
+  color: var(--color-danger);
+}
+
+.face-result__spinner {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 3px solid var(--color-primary-soft);
+  border-top-color: var(--color-primary);
+  animation: spin 0.8s linear infinite;
+  margin-bottom: var(--space-sm);
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* --- Matched state --- */
+/* Desktop/default: photo left, details right, side by side. Stretch so
+   the photo's height always matches the details block's natural height. */
+.face-result--matched {
+  width: 100%;
+  gap: var(--space-lg);
+  flex-direction: row;
+  align-items: stretch;
+}
+
+.face-result__photo {
+  width: 220px;
+  aspect-ratio: 1 / 1;
+  height: auto;
+  border-radius: var(--radius-lg);
+  background: linear-gradient(135deg, #1d505e, #113037);
+  color: #fff;
+  font-weight: 700;
+  font-size: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  flex-shrink: 0;
+  margin: 0 auto;
+}
+
+.face-result__photo:has(img) {
+  background: var(--color-surface);
+}
+
+.face-result__photo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+}
+
+.face-result__details {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--space-md);
+}
+
+.face-result__heading {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-sm);
+}
+
+.face-result__heading h3 {
+  font-size: 18px;
+  color: var(--color-text-primary);
+}
+
+.face-result__badge {
+  font-size: 12px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: var(--radius-full);
+  letter-spacing: 0.02em;
+  border: 1.5px solid transparent;
+}
+
+.face-result__badge.is-checkin {
+  background-color: var(--color-success-light);
+  color: #15803d;
+  border-color: #1d505e;
+}
+
+.face-result__badge.is-checkout {
+  background-color: var(--color-warning-light);
+  color: #b45309;
+  border-color: #1d505e;
+}
+
+.face-result__meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: var(--space-md);
+  margin: 0;
+}
+
+.face-result__meta dt {
+  font-size: 12px;
+  color: var(--color-text-muted);
+  margin-bottom: 2px;
+}
+
+.face-result__meta dd {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--color-text-primary);
+}
+
+/* Mobile: stack vertically — photo first, then name/details below,
+   everything centered. Fixed square size here since stretch doesn't
+   apply in a column layout. */
+@media (max-width: 480px) {
+  .face-result--matched {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .face-result__photo {
+    width: 180px;
+    height: 180px;
+  }
+
+  .face-result__details {
+    align-items: center;
+  }
+
+  .face-result__heading {
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  .face-result__meta {
+    text-align: center;
+  }
+}

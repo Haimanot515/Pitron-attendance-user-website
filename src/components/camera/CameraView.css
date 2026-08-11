@@ -1,0 +1,112 @@
+.camera-view {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  background-color: #0f172a;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.camera-view__video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* Mirror the feed so it behaves like a mirror, which feels natural for a
+     front-facing "look at the camera to check in" experience. */
+  transform: scaleX(-1);
+}
+
+.camera-view__placeholder {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-xs);
+  color: #94a3b8;
+  text-align: center;
+  padding: var(--space-md);
+}
+
+.camera-view__placeholder-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-full);
+  background-color: rgba(148, 163, 184, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: var(--space-sm);
+}
+
+.camera-view__placeholder p {
+  color: #e2e8f0;
+  font-weight: 600;
+  font-size: 15px;
+}
+
+.camera-view__placeholder span {
+  font-size: 13px;
+  color: #64748b;
+}
+
+/* --- Face-detection status feedback --- */
+
+.camera-view__ring {
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  border: 4px solid transparent;
+  transition: border-color 200ms ease, box-shadow 200ms ease;
+}
+
+/* scanning: soft pulsing brand-colored dashed ring, "I'm actively looking" */
+.camera-view--scanning .camera-view__ring {
+  border-color: rgba(29, 80, 94, 0.7);
+  border-style: dashed;
+  animation: face-ring-pulse 1.6s ease-in-out infinite;
+}
+
+/* detected: solid brand color, "I see you, hold on" */
+.camera-view--detected .camera-view__ring {
+  border-color: #1d505e;
+  box-shadow: 0 0 0 4px rgba(29, 80, 94, 0.2) inset;
+}
+
+/* capturing: bright white flash, mimics a camera shutter */
+.camera-view--capturing .camera-view__ring {
+  border-color: #ffffff;
+  box-shadow: 0 0 0 6px rgba(255, 255, 255, 0.35) inset;
+  animation: face-ring-flash 400ms ease-out;
+}
+
+@keyframes face-ring-pulse {
+  0%, 100% { opacity: 0.5; }
+  50% { opacity: 1; }
+}
+
+@keyframes face-ring-flash {
+  0% { opacity: 0; }
+  30% { opacity: 1; }
+  100% { opacity: 0.6; }
+}
+
+.camera-view__banner {
+  position: absolute;
+  top: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 6px 16px;
+  border-radius: 999px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: #fff;
+  background: rgba(0, 0, 0, 0.55);
+  backdrop-filter: blur(4px);
+  white-space: nowrap;
+}

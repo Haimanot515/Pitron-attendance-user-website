@@ -1,0 +1,31 @@
+.face-detector {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: 8px 14px;
+  border-radius: var(--radius-full);
+  background-color: var(--color-bg);
+  border: 1px solid var(--color-border);
+  font-size: 13px;
+  color: var(--color-text-secondary);
+  width: fit-content;
+}
+
+.face-detector__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--color-text-muted);
+  transition: background-color var(--transition-base);
+}
+
+.face-detector--visible {
+  background-color: rgba(29, 80, 94, 0.1);
+  border-color: #1d505e;
+  color: #113037;
+}
+
+.face-detector--visible .face-detector__dot {
+  background-color: #1d505e;
+  box-shadow: 0 0 0 4px rgba(29, 80, 94, 0.15);
+}
