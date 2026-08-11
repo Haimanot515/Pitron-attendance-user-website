@@ -231,7 +231,12 @@
     top: var(--topbar-height, 64px);
     left: 0;
     right: 0;
-    bottom: 0;
+    /* Explicit height instead of bottom:0 — bottom:0 can leave a gap on
+       real mobile browsers where the address bar shows/hides and shifts
+       the visible viewport, versus an in-app webview with no address bar
+       at all (which is why this looked fine there but not in Chrome). */
+    height: calc(100vh - var(--topbar-height, 64px)); /* fallback */
+    height: calc(100dvh - var(--topbar-height, 64px)); /* real visible height on mobile */
     z-index: 20;
     background: #0f172a;
     padding: var(--space-sm);
