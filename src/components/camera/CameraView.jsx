@@ -8,6 +8,49 @@ const STATUS_TEXT = {
   capturing: 'Captured! Checking…',
 }
 
+// Maps raw getUserMedia errors to a stable code + friendly message so the
+// UI never has to guess. Android Chrome throws a wider variety of these
+// than desktop, so each one gets handled explicitly instead of falling
+// through to a generic "permission denied" message.
+function classifyCameraError(err) {
+  switch (err.name) {
+    case 'NotAllowedError':
+    case 'PermissionDeniedError':
+      return {
+        code: 'permission-denied',
+        message: 'Camera permission was denied. Please allow camera access for this site in your browser settings, then reload the page.',
+      }
+    case 'NotFoundError':
+    case 'DevicesNotFoundError':
+      return {
+        code: 'no-camera',
+        message: 'No camera was found on this device.',
+      }
+    case 'NotReadableError':
+    case 'TrackStartError':
+      return {
+        code: 'camera-busy',
+        message: 'The camera is already in use by another app. Close other apps using the camera and try again.',
+      }
+    case 'OverconstrainedError':
+    case 'ConstraintNotSatisfiedError':
+      return {
+        code: 'overconstrained',
+        message: 'The requested camera settings are not supported on this device.',
+      }
+    case 'SecurityError':
+      return {
+        code: 'insecure-context',
+        message: 'Camera access requires a secure (https) connection.',
+      }
+    default:
+      return {
+        code: 'unknown',
+        message: `Camera error: ${err.message || err.name || 'unknown error'}`,
+      }
+  }
+}
+
 const CameraView = forwardRef(function CameraView({ active, onReady, onError, detectionStatus = 'idle' }, videoRef) {
   const streamRef = useRef(null)
 
@@ -19,24 +62,46 @@ const CameraView = forwardRef(function CameraView({ active, onReady, onError, de
 
     let cancelled = false
 
-    async function startStream() {
-      try {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: { facingMode: 'user', width: { ideal: 720 }, height: { ideal: 540 } },
-          audio: false,
-        })
+    async function requestStream(constraints) {
+      return navigator.mediaDevices.getUserMedia(constraints)
+    }
 
-        if (cancelled) {
-          stream.getTracks().forEach((track) => track.stop())
+    async function startStream() {
+      const preferredConstraints = {
+        video: { facingMode: 'user', width: { ideal: 720 }, height: { ideal: 540 } },
+        audio: false,
+      }
+
+      let stream
+      try {
+        stream = await requestStream(preferredConstraints)
+      } catch (err) {
+        const classified = classifyCameraError(err)
+
+        // Only retry with looser constraints if the failure was about the
+        // constraints themselves — not permission, not a busy/missing
+        // camera. Retrying those would just fail again.
+        if (classified.code === 'overconstrained') {
+          try {
+            stream = await requestStream({ video: true, audio: false })
+          } catch (fallbackErr) {
+            if (!cancelled) onError?.(classifyCameraError(fallbackErr))
+            return
+          }
+        } else {
+          if (!cancelled) onError?.(classified)
           return
         }
-
-        streamRef.current = stream
-        if (videoRef.current) videoRef.current.srcObject = stream
-        onReady?.(stream)
-      } catch (err) {
-        onError?.(err)
       }
+
+      if (cancelled) {
+        stream.getTracks().forEach((track) => track.stop())
+        return
+      }
+
+      streamRef.current = stream
+      if (videoRef.current) videoRef.current.srcObject = stream
+      onReady?.(stream)
     }
 
     startStream()
@@ -69,15 +134,8 @@ const CameraView = forwardRef(function CameraView({ active, onReady, onError, de
         aria-label="Live camera feed"
       />
 
-      {/* Colored ring that hugs the video edges — the primary "am I being
-          seen?" signal. Styled per-status in CameraView.css: grey dashed
-          while scanning, green solid once a face is found, brief white
-          flash on capture. */}
       {active && <div className="camera-view__ring" aria-hidden="true" />}
 
-      {/* Banner pinned to the top of the feed with the current status in
-          plain language. This is the piece that removes the "silent"
-          feeling — it's large, high-contrast, and impossible to miss. */}
       {active && statusLabel && (
         <div className="camera-view__banner" role="status" aria-live="polite">
           {statusLabel}
